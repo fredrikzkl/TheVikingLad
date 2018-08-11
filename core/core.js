@@ -24,14 +24,15 @@ function preload ()
 {   
     //World
     this.load.image('sky', 'assets/sky.png');
-    this.load.image('gameTiles', 'assets/platformer_32_full.png');
-    this.load.tilemapTiledJSON('world1', '/forest1.json');
+
+    this.load.tilemapTiledJSON('world_0101', 'world_1.json');
+    this.load.image('tileset_forest', 'assets/world_tilesets/forest_tileset.png');
 
     //Player
     this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     this.load.image('axe', 'assets/axe.png');
 
-
+    //Gameobjects
     this.load.image('ground', 'assets/platform.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('bomb', 'assets/bomb.png');
@@ -42,6 +43,7 @@ var player;
 var currentMovementSpeed = movementSpeed;
 var doubleJump;
 var doubleJumpTimer;
+//Axe
 var axe;
 var axeAlive;
 
@@ -53,7 +55,6 @@ var upkey;
 //word
 var worldLayer;
 var map;
-var tileset;
 
 //GUI
 var score = 0;
@@ -73,8 +74,8 @@ function create ()
 
 
    	//Creates platform ground group
-    map = this.add.tilemap('world1');
-    var tileset = map.addTilesetImage('tileset1','gameTiles');
+    map = this.add.tilemap('world_0101');
+    var tileset = map.addTilesetImage('tileset1','tileset_forest');
 
     worldLayer = map.createStaticLayer('worldLayer',tileset,0,0);
     worldLayer.setCollisionByProperty({ collides: true });
@@ -108,15 +109,6 @@ function create ()
         repeat: -1
     });
 
-    //Gameobjects
-    //Axe
-     var axeConfig = {
-        key: 'axe',
-        x: 400,
-        y: 300,
-        scale: { x: { randFloat: [ 0.2, 2 ] }, y: { randFloat: [ 1.5, 3 ] } }
-    };
-
 
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
@@ -126,13 +118,13 @@ function create ()
 
     //Camera    
     this.cameras.main.startFollow(player);
- 
     this.cameras.main.setBounds(0, 0, 3200, screen.height);
     this.cameras.main.fadeIn(500);
     
 
     //  Collide the player 
     this.physics.add.collider(player, worldLayer);
+
 
 
 }
@@ -162,15 +154,15 @@ function update ()
         else if(doubleJump){
             player.setVelocityY(-doubleJumpPower);
             doubleJump = false;
-            console.log("DD");
         }
     }
     //Throwing Axe
-    if(Phaser.Input.Keyboard.JustDown(spacebar)){
-        throwAxe();
+    if(Phaser.Input.Keyboard.JustDown(spacebar) && !axeAlive){
+       throwAxe(this);
     }
+
     if(axeAlive){
-        //axe.angle += ;
+        axeLogic(this);
     }
 
 
@@ -179,18 +171,43 @@ function update ()
     if(player.y >= screen.height){playerDead();}
 }
 
-function throwAxe(){
-    axe = this.make.sprite(axeConfig);
-    axe.x = player.x;
-    axe.y = player.y;
-    axe.setVelocityX(axeThrowPower);
+function throwAxe(game){
+    axe = game.physics.add.sprite(player.x, player.y, 'axe').setScale(0.2);
+    game.physics.add.collider(player, axe, destroyAxe, null, this);
+
+    axe.body.allowGravity = false;
+    axeCurrentSpeed = axeThrowPower;
 
     axeAlive = true;
+    axeReturn = false;
 }
+
+function axeLogic(game){
+    //Rotate
+    axe.angle += 5;
+    //Move
+    if(axeCurrentSpeed <= 0) axeReturn = true;  
+    
+    axe.x += axeCurrentSpeed;
+    axeCurrentSpeed -= axeAcceleration;
+
+    if(axeReturn){
+        if(player.y > axe.y) axe.y -= axeCurrentSpeed;
+        if(player.y < axe.y) axe.y += axeCurrentSpeed; 
+    }
+}
+
+function destroyAxe(){
+    if(axeReturn){
+        axe.destroy();
+        axeAlive = false;
+        axe = null;
+    }
+}
+
 
 function playerDead(){
     this.physics.pause();
-
 }
 
 function render(){
@@ -212,3 +229,6 @@ function initiatePlayerAnimations(ref){
 	 //  Our player animations, turning, walking left and walking right.
    
 }
+
+
+

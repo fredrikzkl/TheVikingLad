@@ -19,8 +19,9 @@ var doubleJumpPower=300;
 var collisionBoxConstant = 0.6;
 
 //Axe
-var axeThrowPower = 300;
+var axeThrowPower = 10;
+var axeAcceleration = 0.2;
+//AxeMovement Help variables
+var axeCurrentSpeed;
 
-var axeMinSpeed = 160;
-var axeMaxSpeed = 600;
-var axeDistance = 1000;
+var axeReturn;
