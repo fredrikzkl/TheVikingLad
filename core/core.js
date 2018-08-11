@@ -25,7 +25,9 @@ function preload ()
     //World
     this.load.image('sky', 'assets/sky.png');
 
-    this.load.tilemapTiledJSON('world_0101', 'world_1.json');
+    this.load.tilemapTiledJSON('world_0101', 'levels/world_1/forest01.json');
+    //this.load.tilemapTiledJSON('world_0101', 'world_1.json');
+
     this.load.image('tileset_forest', 'assets/world_tilesets/forest_tileset.png');
 
     //Player
@@ -55,6 +57,7 @@ var upkey;
 //word
 var worldLayer;
 var map;
+var tileset;
 
 //GUI
 var score = 0;
@@ -71,12 +74,10 @@ function create ()
    	platforms = this.physics.add.staticGroup();
 
    	//  Set the world (global) gravity
-
-
-   	//Creates platform ground group
-    map = this.add.tilemap('world_0101');
-    var tileset = map.addTilesetImage('tileset1','tileset_forest');
-
+   	map = this.add.tilemap('world_0101');
+    //VIKTIG! Første argument må ha samme navn som tilesettet i TILED filen ellers er det gg
+    var tileset = map.addTilesetImage('forest_tileset','tileset_forest'); 
+    
     worldLayer = map.createStaticLayer('worldLayer',tileset,0,0);
     worldLayer.setCollisionByProperty({ collides: true });
 

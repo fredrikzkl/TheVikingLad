@@ -1,0 +1,4 @@
+1. worldLayer = layer som har kollisjon
+2. Tileset må være embedded ( Cannot read property '2' of undefined)
+3. 'Collides' attribute på tiles som skal være kolliderende
+4. 
