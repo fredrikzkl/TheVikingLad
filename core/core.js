@@ -6,14 +6,13 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: true
+            debug: false
         }
     },
     scene: {
         preload: preload,
         create: create,
-        update: update,
-        render: render
+        update: update
     }
 };
 
@@ -118,10 +117,11 @@ function create ()
 
 
     //Camera    
-    this.cameras.main.startFollow(player);
+    this.cameras.main.startFollow(player,false,cameraLockSpeed,cameraLockSpeed);
+    this.cameras.main.followOffset.set(-cameraOffset, 0);
+
     this.cameras.main.setBounds(0, 0, 3200, screen.height);
-    this.cameras.main.fadeIn(500);
-    
+    this.cameras.main.fadeIn(cameraFadeIn);
 
     //  Collide the player 
     this.physics.add.collider(player, worldLayer);
@@ -142,6 +142,7 @@ function update ()
         return;
     }
 
+
     //Game controllers
     if(player.body.blocked.down) doubleJump = true;
     if (Phaser.Input.Keyboard.JustDown(upkey))
@@ -158,8 +159,12 @@ function update ()
         }
     }
     //Throwing Axe
-    if(Phaser.Input.Keyboard.JustDown(spacebar) && !axeAlive){
-       throwAxe(this);
+    if(Phaser.Input.Keyboard.JustDown(spacebar)){
+        if(!axeAlive){
+            throwAxe(this);
+        }else{
+           teleportToAxe();
+        }
     }
 
     if(axeAlive){
@@ -196,6 +201,13 @@ function axeLogic(game){
         if(player.y > axe.y) axe.y -= axeCurrentSpeed;
         if(player.y < axe.y) axe.y += axeCurrentSpeed; 
     }
+}
+
+function teleportToAxe(){
+    axeReturn = true; //Must be set in order for the axe to be destroyed
+    player.x = axe.x;
+    player.y = axe.y;
+    destroyAxe();
 }
 
 function destroyAxe(){
