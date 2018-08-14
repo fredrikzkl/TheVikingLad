@@ -6,7 +6,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false
+            debug: true
         }
     },
     scene: {
@@ -80,6 +80,10 @@ function create ()
     worldLayer = map.createStaticLayer('worldLayer',tileset,0,0);
     worldLayer.setCollisionByProperty({ collides: true });
 
+    var debugGraphics = this.add.graphics();
+    map.renderDebug(debugGraphics);
+    debugGraphics.visible = true;
+
    	// The player and its settings
     player = this.physics.add.sprite(playerSpawn.x, playerSpawn.y, 'dude');
     player.body.setSize(player.width*0.6, player.height*0.7,100000,100000);
@@ -128,6 +132,7 @@ function create ()
 
 
 
+
 }
 
 function update ()
@@ -159,11 +164,11 @@ function update ()
         }
     }
     //Throwing Axe
-    if(Phaser.Input.Keyboard.JustDown(spacebar)){
+    if(Phaser.Input.Keyboard.JustDown(spacebar) && !player.body.blocked.right){
         if(!axeAlive){
             throwAxe(this);
         }else{
-           teleportToAxe();
+            teleportToAxe();
         }
     }
 
@@ -174,32 +179,46 @@ function update ()
 
     //World conditions
     //Checks if the player falls down
-    if(player.y >= screen.height){playerDead();}
+    if(player.y >= screen.height){playerDead(this);}
 }
 
 function throwAxe(game){
     axe = game.physics.add.sprite(player.x, player.y, 'axe').setScale(0.2);
-    game.physics.add.collider(player, axe, destroyAxe, null, this);
 
-    axe.body.allowGravity = false;
+    game.physics.add.collider(axe,worldLayer);
+
+    game.physics.add.overlap(player, axe, destroyAxe, null, this);
+
+
     axeCurrentSpeed = axeThrowPower;
 
+    axeColliding = false;
     axeAlive = true;
     axeReturn = false;
+
+    axe.body.allowGravity = false;
 }
 
+
+
+var acc;
 function axeLogic(game){
+    if(axe.x < player.x){
+      axeReturn = true;
+      destroyAxe();
+      return;  
+    } 
     //Rotate
     axe.angle += 5;
     //Move
     if(axeCurrentSpeed <= 0) axeReturn = true;  
-    
-    axe.x += axeCurrentSpeed;
+
+    axe.setVelocityX(axeCurrentSpeed);
     axeCurrentSpeed -= axeAcceleration;
 
     if(axeReturn){
-        if(player.y > axe.y) axe.y -= axeCurrentSpeed;
-        if(player.y < axe.y) axe.y += axeCurrentSpeed; 
+        if(player.y > axe.y) axe.setVelocityY(-axeCurrentSpeed);
+        if(player.y < axe.y) axe.setVelocityY(axeCurrentSpeed);
     }
 }
 
@@ -219,29 +238,16 @@ function destroyAxe(){
 }
 
 
-function playerDead(){
-    this.physics.pause();
+function playerDead(game){
+    game.physics.pause();
 }
-
-function render(){
-	this.debug.cameraInfo(this.cameras.main, 32, 32);
-    const debugGraphics = this.add.graphics().setAlpha(0.75);
-    worldLayer.renderDebug(debugGraphics, {
-      tileColor: null, // Color of non-colliding tiles
-      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-    });    
-
-}
-
-
-
 
 
 function initiatePlayerAnimations(ref){
 	 //  Our player animations, turning, walking left and walking right.
    
 }
+
 
 
 

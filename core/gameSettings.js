@@ -19,14 +19,14 @@ var cameraFadeIn = 500;
 //Player var
 var movementSpeed = 160;
 var graityVal = 500;
-
 var jumpPower = 300;
 var doubleJumpPower=300;
 var collisionBoxConstant = 0.6;
 
 //Axe
-var axeThrowPower = 10;
-var axeAcceleration = 0.2;
+var axeThrowPower = 800;
+var axeAcceleration = 20;
+
 //AxeMovement Help variables
 var axeCurrentSpeed;
 
