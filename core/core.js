@@ -6,7 +6,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: true
+            debug: false
         }
     },
     scene: {
@@ -41,9 +41,11 @@ function preload ()
 
 //Player
 var player;
+var playerFacing; //True = Right, False = left
 var currentMovementSpeed = movementSpeed;
 var doubleJump;
 var doubleJumpTimer;
+
 //Axe
 var axe;
 var axeAlive;
@@ -55,6 +57,7 @@ var upkey;
 
 //word
 var worldLayer;
+var wallJumpLayer;
 var map;
 var tileset;
 
@@ -78,6 +81,7 @@ function create ()
     var tileset = map.addTilesetImage('forest_tileset','tileset_forest'); 
     
     worldLayer = map.createStaticLayer('worldLayer',tileset,0,0);
+
     worldLayer.setCollisionByProperty({ collides: true });
 
     var debugGraphics = this.add.graphics();
@@ -88,6 +92,7 @@ function create ()
     player = this.physics.add.sprite(playerSpawn.x, playerSpawn.y, 'dude');
     player.body.setSize(player.width*0.6, player.height*0.7,100000,100000);
     player.body.updateBounds();
+    playerFacing = true;
 
     //  Player physics properties.
     player.body.gravity.y = graityVal;
@@ -138,9 +143,15 @@ function create ()
 function update ()
 {
 
-	player.setVelocityX(currentMovementSpeed);
+    if(playerFacing){
+        player.setVelocityX(currentMovementSpeed);
+        player.anims.play('right', true);
+    }else{
+        player.setVelocityX(-currentMovementSpeed);
+        player.anims.play('left', true);
 
-    player.anims.play('right', true);
+    }
+	
 
     if (gameOver)
     {
@@ -152,10 +163,40 @@ function update ()
     if(player.body.blocked.down) doubleJump = true;
     if (Phaser.Input.Keyboard.JustDown(upkey))
     {
+
+        //Wall jump
+        if(player.body.blocked.right || player.body.blocked.left){
+            try{
+            //Offset is jused for either looking at the front tile + a little offset, or same backwards
+            var offset = playerFacing ? 0 : -1;
+            //Tile size i 32x32, so have to devide på 32 to get the index in the matrice 
+            var tile;
+            if(playerFacing){
+                tile = map.getTileAt(Math.ceil((player.x/32)+offset), Math.floor((player.y/32)));
+            }else{
+                tile = map.getTileAt(Math.floor((player.x/32)+offset), Math.floor((player.y/32)));
+            }
+
+            if(tile.properties.walljump && !player.body.blocked.down){
+                //Turns the plyer
+                playerFacing ? playerFacing = false : playerFacing = true;
+                //Regular jump after turned
+                player.setVelocityY(-jumpPower);
+                this.cameras.main.followOffset.set((playerFacing ? -cameraOffset : cameraOffset), 0);
+                return;
+            }
+            }catch(e){
+                if(e instanceof TypeError){
+                    //Ignoring this error: Checking a tile that doesnt have property
+                }
+            }
+        }
+        
         //Regular Jump
         if(player.body.blocked.down){
             player.setVelocityY(-jumpPower);  
-         
+
+        //Walljump
         }
         //Double jump
         else if(doubleJump){
@@ -164,7 +205,7 @@ function update ()
         }
     }
     //Throwing Axe
-    if(Phaser.Input.Keyboard.JustDown(spacebar) && !player.body.blocked.right){
+    if(Phaser.Input.Keyboard.JustDown(spacebar) && !player.body.blocked.right && !player.body.blocked.left){
         if(!axeAlive){
             throwAxe(this);
         }else{
@@ -186,11 +227,10 @@ function throwAxe(game){
     axe = game.physics.add.sprite(player.x, player.y, 'axe').setScale(0.2);
 
     game.physics.add.collider(axe,worldLayer);
-
     game.physics.add.overlap(player, axe, destroyAxe, null, this);
 
 
-    axeCurrentSpeed = axeThrowPower;
+    axeCurrentSpeed = playerFacing ? axeThrowPower : -axeThrowPower;
 
     axeColliding = false;
     axeAlive = true;
@@ -201,24 +241,32 @@ function throwAxe(game){
 
 
 
-var acc;
 function axeLogic(game){
-    if(axe.x < player.x){
+    if((axe.x < player.x && playerFacing) || (axe.x > player.x && !playerFacing)){
       axeReturn = true;
       destroyAxe();
       return;  
     } 
     //Rotate
-    axe.angle += 5;
+    axe.angle += playerFacing ? axeRotationSpeed : -axeRotationSpeed;
     //Move
-    if(axeCurrentSpeed <= 0) axeReturn = true;  
+    if(playerFacing){
+        if(axeCurrentSpeed <= 0) axeReturn = true;      
+    }else{
+        if(axeCurrentSpeed >= 0) axeReturn = true;      
+    }
+    
+
+    if(axe.body.blocked.right || axe.body.blocked.left){
+        axeCurrentSpeed = 0;
+    }
 
     axe.setVelocityX(axeCurrentSpeed);
-    axeCurrentSpeed -= axeAcceleration;
+    axeCurrentSpeed -= playerFacing ? axeAcceleration : -axeAcceleration;
 
     if(axeReturn){
-        if(player.y > axe.y) axe.setVelocityY(-axeCurrentSpeed);
-        if(player.y < axe.y) axe.setVelocityY(axeCurrentSpeed);
+        if(player.y > axe.y) axe.setVelocityY(playerFacing ? -axeCurrentSpeed : axeCurrentSpeed);
+        if(player.y < axe.y) axe.setVelocityY(playerFacing ? axeCurrentSpeed : -axeCurrentSpeed);
     }
 }
 
@@ -240,12 +288,6 @@ function destroyAxe(){
 
 function playerDead(game){
     game.physics.pause();
-}
-
-
-function initiatePlayerAnimations(ref){
-	 //  Our player animations, turning, walking left and walking right.
-   
 }
 
 

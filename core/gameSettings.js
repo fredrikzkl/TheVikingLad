@@ -11,8 +11,8 @@ var playerSpawn= {
 }
 
 //Camera
-var cameraLockSpeed = 0.05;
-var cameraOffset = 300;
+var cameraLockSpeed = 0.01;
+var cameraOffset = 250;
 var cameraFadeIn = 500;
 
 
@@ -24,6 +24,7 @@ var doubleJumpPower=300;
 var collisionBoxConstant = 0.6;
 
 //Axe
+var axeRotationSpeed = 5;
 var axeThrowPower = 800;
 var axeAcceleration = 20;
 
