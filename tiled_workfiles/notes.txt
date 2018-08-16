@@ -2,3 +2,17 @@
 2. Tileset må være embedded ( Cannot read property '2' of undefined)
 3. 'Collides' attribute på tiles som skal være kolliderende
 4. 
+
+
+
+--------------
+map.createFromObjects('coins', 136, {key: 'star'}, 0, true, false, coins);
+--------------
+First parameter: string of map objects layer.
+Second parameter: Gid.
+Third parameter: sprite string to use.
+Fourth parameter: value of the frame to initialize the object.
+Fifth parameter: default status of the sprite.
+Sixth parameter: autocull. The sprites that are autoculled are culled from the 		camera if out of its range..
+Seventh parameter: the group is specified
+     

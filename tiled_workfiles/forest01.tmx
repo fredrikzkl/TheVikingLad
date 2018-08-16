@@ -846,10 +846,17 @@
 47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,29,29,29,38,38,38,38,38,38,0,0,0,38,38,38,38,38,38,0,0,0,38,38,38,38,0,0,0,38,38,38,38,38,0,0,0,0,0,0,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47,47
 </data>
  </layer>
- <objectgroup name="gameobjects">
-  <object id="1" x="1145" y="311" width="45" height="30"/>
-  <object id="11" gid="136" x="1699" y="411" width="24" height="22"/>
-  <object id="12" gid="136" x="261" y="538" width="24" height="22"/>
+ <objectgroup name="coins">
+  <object id="11" gid="136" x="1699" y="411" width="24" height="22">
+   <properties>
+    <property name="body.velocity.x" type="int" value="100"/>
+   </properties>
+  </object>
+  <object id="12" gid="136" x="261" y="538" width="24" height="22">
+   <properties>
+    <property name="velocity.x" type="int" value="100"/>
+   </properties>
+  </object>
   <object id="13" gid="136" x="354" y="537" width="24" height="22"/>
   <object id="14" gid="136" x="962" y="507" width="24" height="22"/>
   <object id="15" gid="136" x="1060" y="444" width="24" height="22"/>

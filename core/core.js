@@ -50,6 +50,9 @@ var doubleJumpTimer;
 var axe;
 var axeAlive;
 
+//Collectibles
+var coins;
+
 //Input
 var cursors;
 var spacebar;
@@ -79,10 +82,13 @@ function create ()
    	map = this.add.tilemap('world_0101');
     //VIKTIG! Første argument må ha samme navn som tilesettet i TILED filen ellers er det gg
     var tileset = map.addTilesetImage('forest_tileset','tileset_forest'); 
+
+
     
     worldLayer = map.createStaticLayer('worldLayer',tileset,0,0);
-
     worldLayer.setCollisionByProperty({ collides: true });
+
+
 
     var debugGraphics = this.add.graphics();
     map.renderDebug(debugGraphics);
@@ -119,11 +125,20 @@ function create ()
     });
 
 
+    // Collectibles
+
+    coins = this.physics.add.group();  
+    //136 = GID in json file
+    map.createFromObjects('coins', 136, {key: 'star'}).forEach(function(c) {coins.add(c);});
+    coins.children.iterate(function (child) {
+        child.body.allowGravity = false;
+
+    });
+
     //  Input Events
     cursors = this.input.keyboard.createCursorKeys();
     spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     upkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-
 
     //Camera    
     this.cameras.main.startFollow(player,false,cameraLockSpeed,cameraLockSpeed);
@@ -132,13 +147,16 @@ function create ()
     this.cameras.main.setBounds(0, 0, 3200, screen.height);
     this.cameras.main.fadeIn(cameraFadeIn);
 
-    //  Collide the player  i
+    //  Collide the player  
     this.physics.add.collider(player, worldLayer);
+    this.physics.add.overlap(player, coins, collectCoin, null, this);
 
+    //Axe collision
 
 
 
 }
+var deleteme;
 
 function update ()
 {
@@ -224,14 +242,19 @@ function update ()
 
     //World conditions
     //Checks if the player falls down
-    if(player.y >= screen.height){playerDead(this);}
+    if(player.y >= (screen.height + player.height)){
+        playerDead(this);
+    }
 }
 
 function throwAxe(game){
     axe = game.physics.add.sprite(player.x, player.y, 'axe').setScale(0.2);
 
+
     game.physics.add.collider(axe,worldLayer);
     game.physics.add.overlap(player, axe, destroyAxe, null, this);
+    game.physics.add.overlap(axe, coins, collectCoin, null, this);
+
 
 
     axeCurrentSpeed = playerFacing ? axeThrowPower : -axeThrowPower;
@@ -289,10 +312,18 @@ function destroyAxe(){
     }
 }
 
+function collectCoin(player,coin){
+    coin.destroy();    
+
+}  
+
 
 function playerDead(game){
     game.physics.pause();
+    //game.scene.stop();
 }
+
+
 
 
 

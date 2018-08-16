@@ -14,24 +14,21 @@
         }, 
         {
          "draworder":"topdown",
-         "name":"gameobjects",
+         "name":"coins",
          "objects":[
-                {
-                 "height":30,
-                 "id":1,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":45,
-                 "x":1145,
-                 "y":311
-                }, 
                 {
                  "gid":136,
                  "height":22,
                  "id":11,
                  "name":"",
+                 "properties":
+                    {
+                     "body.velocity.x":100
+                    },
+                 "propertytypes":
+                    {
+                     "body.velocity.x":"int"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -44,6 +41,14 @@
                  "height":22,
                  "id":12,
                  "name":"",
+                 "properties":
+                    {
+                     "velocity.x":100
+                    },
+                 "propertytypes":
+                    {
+                     "velocity.x":"int"
+                    },
                  "rotation":0,
                  "type":"",
                  "visible":true,
