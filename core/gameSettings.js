@@ -11,7 +11,7 @@ var playerSpawn= {
 }
 
 //Camera
-var cameraLockSpeed = 0.01;
+var cameraLockSpeed = 0.02;
 var cameraOffset = 250;
 var cameraFadeIn = 500;
 

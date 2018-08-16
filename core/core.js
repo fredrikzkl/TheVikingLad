@@ -132,7 +132,7 @@ function create ()
     this.cameras.main.setBounds(0, 0, 3200, screen.height);
     this.cameras.main.fadeIn(cameraFadeIn);
 
-    //  Collide the player 
+    //  Collide the player  i
     this.physics.add.collider(player, worldLayer);
 
 
@@ -143,21 +143,26 @@ function create ()
 function update ()
 {
 
-    if(playerFacing){
-        player.setVelocityX(currentMovementSpeed);
-        player.anims.play('right', true);
-    }else{
-        player.setVelocityX(-currentMovementSpeed);
-        player.anims.play('left', true);
-
-    }
-	
-
     if (gameOver)
     {
         return;
     }
 
+    //Facing configurations
+    if(playerFacing){
+        player.setVelocityX(currentMovementSpeed);
+        player.anims.play('right', true);
+        
+    }else{
+        player.setVelocityX(-currentMovementSpeed);
+        player.anims.play('left', true);
+    }
+    //To reduce motion sickness, move camera offset only when landing from jump
+    if(player.body.blocked.down){
+        this.cameras.main.followOffset.set((playerFacing ? -cameraOffset : cameraOffset), 0);
+
+    }
+	
 
     //Game controllers
     if(player.body.blocked.down) doubleJump = true;
@@ -182,7 +187,6 @@ function update ()
                 playerFacing ? playerFacing = false : playerFacing = true;
                 //Regular jump after turned
                 player.setVelocityY(-jumpPower);
-                this.cameras.main.followOffset.set((playerFacing ? -cameraOffset : cameraOffset), 0);
                 return;
             }
             }catch(e){
