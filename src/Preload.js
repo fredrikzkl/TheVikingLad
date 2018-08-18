@@ -22,8 +22,8 @@ class Preload extends Phaser.Scene{
 
 
         //Loading INFO
-        var width = this.cameras.main.width;
-        var height = this.cameras.main.height;
+        const width = this.cameras.main.width;
+        const height = this.cameras.main.height;
 
         var loadingText = this.make.text({
             x: width / 2,
@@ -75,5 +75,6 @@ class Preload extends Phaser.Scene{
 
     create(){
         //this.add.image(400,400,'game_logo');
+        this.scene.start('Level0_0');
     }
 }

@@ -11,7 +11,11 @@ const config = {
     },
     scene:[
         Boot,
-        Preload
+        Preload,
+        MainMenu,
+
+        //Levels
+        Level0_0
     ]
 };
 
