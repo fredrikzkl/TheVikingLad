@@ -83,7 +83,7 @@ class Level0_0 extends Phaser.Scene{
         }
 
         player.update(time, delta,this.keys);
-    
+        
         //World conditions
         //Checks if the player falls down
         if(player.y >= (screen.height + player.height)){

@@ -1,4 +1,3 @@
-var lastDuration = 0;
 class Player extends Phaser.GameObjects.Sprite{
 
     constructor(scene, x=0, y=0, texture = 'dude'){
@@ -11,6 +10,7 @@ class Player extends Phaser.GameObjects.Sprite{
         this.body.updateBounds();
         this.facing = true;
         this.body.gravity.y = 900;
+        //Methods i guess Es6
         //Constants
         this.jumpPower = 300;
         this.doubleJumpPower=400;
@@ -22,8 +22,11 @@ class Player extends Phaser.GameObjects.Sprite{
         this.jumping = false;
         this.jumpTimer = this.jumpingTimerConstant;
         this.doubleJump;
-        this.axe;
         this.currentMovementSpeed = this.movementSpeed;
+        //Axe related
+        this.axe;
+        this.axeCooldownConstant = 300;
+        this.axeCooldown = this.axeCooldownConstant;
 
     }
 
@@ -32,7 +35,8 @@ class Player extends Phaser.GameObjects.Sprite{
 
     update(time,delta, keys){
         let input = {
-            jump : keys.jump.isDown
+            jump : keys.jump.isDown,
+            throwAxe : keys.axe.isDown
         }
 
         //Facing configurations
@@ -75,13 +79,16 @@ class Player extends Phaser.GameObjects.Sprite{
 
         
         //Throwing Axe
-        // if(Phaser.Input.Keyboard.JustDown(spacebar) && !player.body.blocked.right && !player.body.blocked.left){
-        //     if(!axeAlive){
-        //         this.throwAxe(this);
-        //     }else{
-        //         this.teleportToAxe();
-        //     }
-        // }
+        this.axeCooldown -= delta;
+        if(input.throwAxe && !player.body.blocked.right && !player.body.blocked.left && this.axeCooldown < 0){
+            this.axeCooldown = this.axeCooldownConstant;
+            if(this.axe == null){
+                this.axe = new Axe(this,this.scene,this.body.x,this.body.y);
+            }else{
+                this.teleportToAxe();
+            }
+        }
+        if(this.axe != null) this.axe.update(this);
 
         // if(this.axe.alive){
         //     //this.axeLogic(this);
@@ -89,12 +96,15 @@ class Player extends Phaser.GameObjects.Sprite{
     
     }
 
-    jump(delta, clickDuration){
+    jump(delta){
         
         if (!this.body.blocked.down && !this.jumping) {
+            //If falling mid air, it's ok to jump
+            if(this.doubleJump) this.secondJump();
             return;
         }
         //Wall jump
+        //Checking if not against any walls, or in air, or spamming button
         if((this.body.blocked.right || this.body.blocked.left) && !this.body.blocked.down && this.jumpButtonTimer < 1){
             try{
                 //Offset is jused for either looking at the front tile + a little offset, or same backwards
@@ -115,7 +125,6 @@ class Player extends Phaser.GameObjects.Sprite{
                 }
             }catch(e){
                 if(e instanceof TypeError){
-                    console.log(e);
                     //Ignoring this error: Checking a tile that doesnt have property
                 }
             }
@@ -127,13 +136,11 @@ class Player extends Phaser.GameObjects.Sprite{
         }
         //Double jump
         else if(this.doubleJumpReady && this.doubleJump){
-            this.body.velocity.y = (-this.doubleJumpPower);
-            this.doubleJump = false;
-            this.doubleJumpReady = false;
+            this.secondJump();
         }
 
         
-
+        //If not in the air, reset that shit
         if (!this.jumping) {
             //Resetting the jump timer
             this.jumpTimer = this.jumpingTimerConstant;
@@ -143,6 +150,16 @@ class Player extends Phaser.GameObjects.Sprite{
         
     }
 
+    secondJump(){
+        this.body.velocity.y = (-this.doubleJumpPower);
+        this.doubleJump = false;
+        this.doubleJumpReady = false;
+    }
+
+
+
+    
+
     teleportToAxe(){
         axeReturn = true; //Must be set in order for the axe to be destroyed
         player.x = axe.x;
@@ -150,13 +167,6 @@ class Player extends Phaser.GameObjects.Sprite{
         this.destroyAxe();
     }
 
-    destroyAxe(){
-        if(axeReturn){
-            axe.destroy();
-            axeAlive = false;
-            axe = null;
-        }
-    }
-
+    
 
 }

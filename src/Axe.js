@@ -5,7 +5,7 @@ class Axe extends Phaser.GameObjects.Sprite {
         scene.physics.world.enable(this);
         scene.add.existing(this);
         //Properties
-        this.body.setScale(0.2);
+        this.setScale(0.2);
         this.body.allowGravity = false;
         //Variables
         this.alive = true;
@@ -19,9 +19,9 @@ class Axe extends Phaser.GameObjects.Sprite {
     }
 
     update(){
-        if((axe.x < player.x && playerFacing) || (axe.x > player.x && !playerFacing)){
-            axeReturn = true;
-            this.destroyAxe();
+        if((this.x < this.player.x && this.player.facing) || (this.x > this.player.x && !this.player.facing)){
+            this.return = true;
+            this.destroy();
             return;  
           } 
           //Rotate
@@ -45,5 +45,13 @@ class Axe extends Phaser.GameObjects.Sprite {
               if(player.y > axe.y) axe.setVelocityY(playerFacing ? -axeCurrentSpeed : axeCurrentSpeed);
               if(player.y < axe.y) axe.setVelocityY(playerFacing ? axeCurrentSpeed : -axeCurrentSpeed);
           }
+    }
+
+    destroy(){
+        if(this.return){
+            this.alive = false;
+            this.player.axe = null;
+            this.destroy();
+        }
     }
 }
