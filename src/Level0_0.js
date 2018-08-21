@@ -1,4 +1,3 @@
-
 //Player
 var player;
 
@@ -25,6 +24,8 @@ var score = 0;
 var gameOver = false;
 var scoreText;
 
+
+
 class Level0_0 extends Phaser.Scene{
     constructor(){
         super({
@@ -47,6 +48,10 @@ class Level0_0 extends Phaser.Scene{
         map.renderDebug(debugGraphics);
         debugGraphics.visible = true;
 
+        const playerSpawn = {
+            x : 100,
+            y : 450
+        }
 
         //Creating the player.
         player = new Player(this, playerSpawn.x, playerSpawn.y);
@@ -65,10 +70,10 @@ class Level0_0 extends Phaser.Scene{
         });
 
         //Camera    
+        
         this.cameras.main.startFollow(player,false,cameraLockSpeed,cameraLockSpeed);
         this.cameras.main.followOffset.set(-cameraOffset, 0);
-
-        this.cameras.main.setBounds(0, 0, 3200, screen.height);
+        this.cameras.main.setBounds(0, 0, 3200, config.height);
         this.cameras.main.fadeIn(cameraFadeIn);
 
         //  Collide the player  
@@ -86,7 +91,7 @@ class Level0_0 extends Phaser.Scene{
         
         //World conditions
         //Checks if the player falls down
-        if(player.y >= (screen.height + player.height)){
+        if(player.y >= (config.height + player.height)){
             this.playerDead(this);
         }
        

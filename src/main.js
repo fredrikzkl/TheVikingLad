@@ -1,7 +1,12 @@
+const cameraLockSpeed = 0.02;
+const cameraOffset = 250;
+const cameraFadeIn = 500;
+
+
 const config = {
     type: Phaser.AUTO,
-    width: screen.width,
-    height: screen.height,
+    width: 800,
+    height: 600,
     physics: {
         default: 'arcade',
         arcade: {
