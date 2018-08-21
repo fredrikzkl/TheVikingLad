@@ -1,24 +1,4 @@
 
-function preload ()
-{   
-    //World
-    this.load.image('sky', 'assets/sky.png');
-
-    this.load.tilemapTiledJSON('world_0101', 'levels/world_1/forest01.json');
-    //this.load.tilemapTiledJSON('world_0101', 'world_1.json');
-
-    this.load.image('tileset_forest', 'assets/world_tilesets/forest_tileset.png');
-
-    //Player
-    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-    this.load.image('axe', 'assets/axe.png');
-
-    //Gameobjects
-    this.load.image('ground', 'assets/platform.png');
-    this.load.image('star', 'assets/star.png');
-    this.load.image('bomb', 'assets/bomb.png');
-}
-
 //Player
 var player;
 var playerFacing; //True = Right, False = left
