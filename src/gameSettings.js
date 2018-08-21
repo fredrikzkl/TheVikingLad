@@ -14,15 +14,3 @@ const playerSpawn= {
 const cameraLockSpeed = 0.02;
 const cameraOffset = 250;
 const cameraFadeIn = 500;
-
-
-
-//Axe
-const axeRotationSpeed = 5;
-const axeThrowPower = 800;
-const axeAcceleration = 20;
-
-//AxeMovement Help variables
-var axeCurrentSpeed;
-
-var axeReturn;

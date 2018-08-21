@@ -83,12 +83,13 @@ class Player extends Phaser.GameObjects.Sprite{
         if(input.throwAxe && !player.body.blocked.right && !player.body.blocked.left && this.axeCooldown < 0){
             this.axeCooldown = this.axeCooldownConstant;
             if(this.axe == null){
-                this.axe = new Axe(this,this.scene,this.body.x,this.body.y);
+                this.axe = new Axe(this,this.scene);
             }else{
-                this.teleportToAxe();
+                //this.teleportToAxe();
             }
         }
         if(this.axe != null) this.axe.update(this);
+
 
         // if(this.axe.alive){
         //     //this.axeLogic(this);
@@ -157,8 +158,6 @@ class Player extends Phaser.GameObjects.Sprite{
     }
 
 
-
-    
 
     teleportToAxe(){
         axeReturn = true; //Must be set in order for the axe to be destroyed
