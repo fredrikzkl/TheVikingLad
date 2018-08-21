@@ -1,10 +1,6 @@
 
 //Player
 var player;
-var playerFacing; //True = Right, False = left
-var currentMovementSpeed = movementSpeed;
-var doubleJump;
-var doubleJumpTimer;
 
 //Axe
 var axe;
@@ -80,35 +76,19 @@ class Level0_0 extends Phaser.Scene{
         this.physics.add.overlap(player, coins, this.collectCoin, null, this);
     }
 
-    update(){
+    update(time,delta){
         if (gameOver)
         {
             return;
         }
-        
-        player.update(this.keys);
-    
-        
-        //Throwing Axe
-        // if(Phaser.Input.Keyboard.JustDown(spacebar) && !player.body.blocked.right && !player.body.blocked.left){
-        //     if(!axeAlive){
-        //         this.throwAxe(this);
-        //     }else{
-        //         this.teleportToAxe();
-        //     }
-        // }
-    
-        if(axeAlive){
-            this.axeLogic(this);
-        }
-    
+
+        player.update(time, delta,this.keys);
     
         //World conditions
         //Checks if the player falls down
         if(player.y >= (screen.height + player.height)){
             this.playerDead(this);
         }
-
        
     }
 
@@ -128,6 +108,7 @@ class Level0_0 extends Phaser.Scene{
             axe  : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         }
     }
+
 
 }
 

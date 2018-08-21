@@ -16,12 +16,6 @@ const cameraOffset = 250;
 const cameraFadeIn = 500;
 
 
-//Player var
-const movementSpeed = 160;
-const graityVal = 500;
-const jumpPower = 300;
-const doubleJumpPower=300;
-const collisionBoxConstant = 0.6;
 
 //Axe
 const axeRotationSpeed = 5;
